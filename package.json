@@ -46,5 +46,7 @@
     "standard": "*",
     "tape": "^4.5.1"
   },
-  "dependencies": {}
+  "dependencies": {
+    "fisher-yates": "^1.0.3"
+  }
 }
