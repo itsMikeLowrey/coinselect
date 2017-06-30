@@ -1,4 +1,5 @@
 let accumulative = require('../accumulative')
+let branchandbound = require('../branchandbound')
 let blackjack = require('../blackjack')
 let shuffle = require('fisher-yates')
 let shuffleInplace = require('fisher-yates/inplace')
@@ -128,6 +129,7 @@ function privet (utxos, outputs, feeRate) {
 module.exports = {
   accumulative,
   bestof,
+  branchandbound,
   blackjack,
   blackmax,
   blackmin,
