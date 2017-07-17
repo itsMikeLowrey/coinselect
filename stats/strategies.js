@@ -61,7 +61,7 @@ function bnbmin (utxos, outputs, feeRate, factor) {
   utxos = utxos.concat().sort((a, b) => b.value - a.value)
 
   // else, try the accumulative strategy
-  return accumulative(utxos, outputs, feeRate, 2 ** i)
+  return accumulative(utxos, outputs, feeRate)
 }
 
 function bnbmax (utxos, outputs, feeRate, factor) {
