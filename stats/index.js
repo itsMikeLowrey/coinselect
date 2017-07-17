@@ -20,6 +20,7 @@ for (var j = 0; j < 100; ++j) {
 
   // for each strategy
   for (var name in modules) {
+    console.log(name)
     let f = modules[name]
     let simulation = new Simulation(name, f, feeRate)
 
