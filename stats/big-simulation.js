@@ -1,6 +1,6 @@
 let Simulation = require('./simulation')
 let modules = require('./strategies')
-let feeRate = 56 * 100
+let feeRate = 10
 let results = []
 
 let list = require('./moneypot-hotwallet.json')
@@ -26,7 +26,8 @@ for (var name in modules) {
     if (value > 0) {
       simulation.addUTXO(txo)
     } else {
-      simulation.run([txo])
+      txo.script.length = 25
+      simulation.runQueued([txo])
     }
   }
 
