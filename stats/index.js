@@ -14,7 +14,7 @@ for (var j = 0; j < 100; ++j) {
   for (var i = 1; i < 4; ++i) {
     let utxos = Simulation.generateTxos(20 / i, min, max)
     let txos = Simulation.generateTxos(80 / i, min, max / 3)
-
+    txos.forEach(txo => txo.script.length = 34)
     stages.push({ utxos, txos })
   }
 
