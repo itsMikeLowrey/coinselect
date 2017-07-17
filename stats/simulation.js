@@ -202,6 +202,9 @@ Simulation.printResults = function (mergedResults) {
       '| totalCost', pad('' + Math.round(stats.totalCost / 1000)),
       '| utxos', pad('' + stats.utxos)
     )
+
+    // uncomment for more easily parsable results
+    // console.log(stats.name + ';' + stats.totalCost + ';' + stats.fees + ';' + stats.utxos)
   })
 }
 
