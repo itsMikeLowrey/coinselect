@@ -46,7 +46,10 @@ Simulation.generateTxos = function (n, min, max, scriptSizes) {
       value: v,
       script: {
         length: s
-      }
+      },
+      own: false,
+      coinbase: false,
+      confirmations: 100
     })
   }
   return txos
@@ -131,6 +134,10 @@ Simulation.prototype.useAlgorithmResult = function (inputs, outputs, fee) {
   outputs.filter(x => x.script === undefined).forEach((x) => {
     // assign it a random address
     x.address = randomAddress()
+    x.own = true
+    x.coinbase = false
+    x.confirmations = 100
+
     this.addUTXO(x, true)
   })
 }
