@@ -4,8 +4,8 @@ module.exports = {
 }
 
 function sort (type) {
-  return function value (utxos, feeRate) {
-    return utxos.concat().sort(function (a, b) {
+  return function value (utxos) {
+    return utxos.sort(function (a, b) {
       var difference = a.value - b.value
       return type === 'ascending' ? difference : -difference
     })

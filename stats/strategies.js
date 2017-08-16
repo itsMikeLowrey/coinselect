@@ -4,7 +4,8 @@ let valueSort = require('../src/utxosort/value')
 let coinSelect = require('../src/')
 let utils = require('../src/utils')
 
-let shuffle = require('fisher-yates')
+let shuffleImport = require('fisher-yates/inplace')
+let shuffle = utxos => shuffleImport(utxos)
 
 var blackmax = utils.applySort(valueSort.ascending, utils.algorithmBackup([blackjack, accumulative]))
 var blackmin = utils.applySort(valueSort.descending, utils.algorithmBackup([blackjack, accumulative]))

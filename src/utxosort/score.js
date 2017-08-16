@@ -12,7 +12,7 @@ module.exports = {
 
 function sort (type) {
   return function (utxos, feeRate) {
-    return utxos.concat().sort(function (a, b) {
+    return utxos.sort(function (a, b) {
       var difference = utxoScore(a, feeRate) - utxoScore(b, feeRate)
       return type === 'ascending' ? difference : -difference
     })
