@@ -18,26 +18,7 @@ var random = utils.applySort(shuffle, accumulative)
 
 var bestof = utils.algorithmBest(Array(100).fill(utils.applySort(shuffle, accumulative)))
 
-// This is impossible with utils.applySort
-// Also I fail to see diff between this and maximal
-function proximal (utxos, outputs, feeRate) {
-  const outAccum = outputs.reduce((a, x) => a + x.value, 0)
-
-  utxos = utxos.concat().sort((a, b) => {
-    let aa = a.value - outAccum
-    let bb = b.value - outAccum
-
-    return aa - bb
-  })
-
-  return accumulative(utxos, outputs, feeRate)
-}
-
-function reverse (utxos) {
-  return utxos.concat().reverse()
-}
-
-var FIFO = utils.applySort(reverse, accumulative)
+var FIFO = utils.applySort(utxos => utxos.reverse(), accumulative)
 
 module.exports = {
   accumulative,
