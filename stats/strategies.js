@@ -3,6 +3,7 @@ let blackjack = require('../src/inputs/blackjack')
 let valueSort = require('../src/utxosort/value')
 let privetSort = require('../src/utxosort/privet')
 let blackminScore = require('../src/blackminscore')
+let bnb = require('../src/')
 let utils = require('../src/utils')
 
 let shuffleImport = require('fisher-yates/inplace')
@@ -26,6 +27,7 @@ let FIFO = utils.applySort(utxos => utxos.reverse(), accumulative)
 module.exports = {
   accumulative,
   bestof,
+  bnb,
   blackjack,
   blackmax,
   blackmin,
