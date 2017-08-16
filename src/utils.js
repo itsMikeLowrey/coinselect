@@ -102,6 +102,10 @@ function algorithmBest (algorithms) {
   }
 }
 
+function utxoScore (x, feeRate) {
+  return x.value - (feeRate * inputBytes(x))
+}
+
 module.exports = {
   dustThreshold: dustThreshold,
   finalize: finalize,
@@ -113,5 +117,6 @@ module.exports = {
   uintOrNaN: uintOrNaN,
   applySort: applySort,
   algorithmBackup: algorithmBackup,
-  algorithmBest: algorithmBest
+  algorithmBest: algorithmBest,
+  utxoScore: utxoScore
 }

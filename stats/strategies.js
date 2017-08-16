@@ -1,6 +1,7 @@
 let accumulative = require('../src/inputs/accumulative')
 let blackjack = require('../src/inputs/blackjack')
 let valueSort = require('../src/utxosort/value')
+let privetSort = require('../src/utxosort/privet')
 let coinSelect = require('../src/')
 let utils = require('../src/utils')
 
@@ -13,6 +14,8 @@ let blackrand = utils.applySort(shuffle, utils.algorithmBackup([blackjack, accum
 
 let maximal = utils.applySort(valueSort.ascending, accumulative)
 let minimal = utils.applySort(valueSort.descending, accumulative)
+
+let privet = utils.applySort(privetSort, accumulative)
 
 let random = utils.applySort(shuffle, accumulative)
 
@@ -31,8 +34,6 @@ module.exports = {
   FIFO,
   maximal,
   minimal,
-  // privet
-  // Privet removed - couldn't figure out the point :(
-  proximal,
+  privet,
   random
 }
