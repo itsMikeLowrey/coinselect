@@ -62,7 +62,7 @@ module.exports = function confTrials (minConfCoinbase, algorithm) {
         }
       }
     }
-    
+
     return result
   }
 }

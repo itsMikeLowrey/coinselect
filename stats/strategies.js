@@ -2,7 +2,7 @@ let accumulative = require('../src/inputs/accumulative')
 let blackjack = require('../src/inputs/blackjack')
 let valueSort = require('../src/utxosort/value')
 let privetSort = require('../src/utxosort/privet')
-let coinSelect = require('../src/')
+let blackminScore = require('../src/blackminscore')
 let utils = require('../src/utils')
 
 let shuffleImport = require('fisher-yates/inplace')
@@ -30,7 +30,7 @@ module.exports = {
   blackmax,
   blackmin,
   blackrand,
-  coinSelect,
+  blackminScore,
   FIFO,
   maximal,
   minimal,

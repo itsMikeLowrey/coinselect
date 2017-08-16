@@ -1,5 +1,5 @@
-var coinSelect = require('../src/')
-var fixtures = require('./fixtures')
+var coinSelect = require('../src/blackminscore')
+var fixtures = require('./fixtures/blackminscore')
 var tape = require('tape')
 var utils = require('./_utils')
 
