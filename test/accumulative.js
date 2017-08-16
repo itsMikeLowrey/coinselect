@@ -1,4 +1,4 @@
-var coinAccum = require('../accumulative')
+var coinAccum = require('../src/inputs/accumulative')
 var fixtures = require('./fixtures/accumulative')
 var tape = require('tape')
 var utils = require('./_utils')

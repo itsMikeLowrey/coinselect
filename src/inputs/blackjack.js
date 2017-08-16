@@ -1,4 +1,4 @@
-var utils = require('./utils')
+var utils = require('../utils')
 
 // only add inputs if they don't bust the target value (aka, exact match)
 // worst-case: O(n)

@@ -1,4 +1,4 @@
-var coinSelect = require('../')
+var coinSelect = require('../src/')
 var fixtures = require('./fixtures')
 var tape = require('tape')
 var utils = require('./_utils')

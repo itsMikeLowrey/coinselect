@@ -1,4 +1,4 @@
-var utils = require('./utils')
+var utils = require('../utils')
 
 // add inputs until we reach or surpass the target value (or deplete)
 // worst-case: O(n)

@@ -1,5 +1,5 @@
 var tape = require('tape')
-var utils = require('../utils')
+var utils = require('../src/utils')
 
 tape('utils', function (t) {
   t.test('uintOrNaN', function (t) {

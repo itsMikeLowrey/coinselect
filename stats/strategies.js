@@ -1,63 +1,24 @@
-let accumulative = require('../accumulative')
-let blackjack = require('../blackjack')
+let accumulative = require('../src/inputs/accumulative')
+let blackjack = require('../src/inputs/blackjack')
+let valueSort = require('../src/utxosort/value')
+let coinSelect = require('../src/')
+let utils = require('../src/utils')
+
 let shuffle = require('fisher-yates')
-let shuffleInplace = require('fisher-yates/inplace')
-let coinSelect = require('../')
-let utils = require('../utils')
 
-function blackmax (utxos, outputs, feeRate) {
-  // order by ascending value
-  utxos = utxos.concat().sort((a, b) => a.value - b.value)
+var blackmax = utils.applySort(valueSort('ascending'), utils.algorithmBackup([blackjack, accumulative]))
+var blackmin = utils.applySort(valueSort('descending'), utils.algorithmBackup([blackjack, accumulative]))
+var blackrand = utils.applySort(shuffle, utils.algorithmBackup([blackjack, accumulative]))
 
-  // attempt to use the blackjack strategy first (no change output)
-  let base = blackjack(utxos, outputs, feeRate)
-  if (base.inputs) return base
+var maximal = utils.applySort(valueSort('ascending'), accumulative)
+var minimal = utils.applySort(valueSort('descending'), accumulative)
 
-  // else, try the accumulative strategy
-  return accumulative(utxos, outputs, feeRate)
-}
+var random = utils.applySort(shuffle, accumulative)
 
-function blackmin (utxos, outputs, feeRate) {
-  // order by descending value
-  utxos = utxos.concat().sort((a, b) => b.value - a.value)
+var bestof = utils.algorithmBest(Array(100).fill(utils.applySort(shuffle, accumulative)))
 
-  // attempt to use the blackjack strategy first (no change output)
-  let base = blackjack(utxos, outputs, feeRate)
-  if (base.inputs) return base
-
-  // else, try the accumulative strategy
-  return accumulative(utxos, outputs, feeRate)
-}
-
-function blackrand (utxos, outputs, feeRate) {
-  utxos = shuffle(utxos)
-
-  // attempt to use the blackjack strategy first (no change output)
-  let base = blackjack(utxos, outputs, feeRate)
-  if (base.inputs) return base
-
-  // else, try the accumulative strategy
-  return accumulative(utxos, outputs, feeRate)
-}
-
-function maximal (utxos, outputs, feeRate) {
-  utxos = utxos.concat().sort((a, b) => a.value - b.value)
-
-  return accumulative(utxos, outputs, feeRate)
-}
-
-function minimal (utxos, outputs, feeRate) {
-  utxos = utxos.concat().sort((a, b) => b.value - a.value)
-
-  return accumulative(utxos, outputs, feeRate)
-}
-
-function FIFO (utxos, outputs, feeRate) {
-  utxos = utxos.concat().reverse()
-
-  return accumulative(utxos, outputs, feeRate)
-}
-
+// This is impossible with utils.applySort
+// Also I fail to see diff between this and maximal
 function proximal (utxos, outputs, feeRate) {
   const outAccum = outputs.reduce((a, x) => a + x.value, 0)
 
@@ -71,59 +32,11 @@ function proximal (utxos, outputs, feeRate) {
   return accumulative(utxos, outputs, feeRate)
 }
 
-// similar to bitcoind
-function random (utxos, outputs, feeRate) {
-  utxos = shuffle(utxos)
-
-  return accumulative(utxos, outputs, feeRate)
+function reverse (utxos) {
+  return utxos.concat().reverse()
 }
 
-function bestof (utxos, outputs, feeRate) {
-  let n = 100
-  let utxosCopy = utxos.concat()
-  let best = { fee: Infinity }
-
-  while (n) {
-    shuffleInplace(utxosCopy)
-
-    let result = accumulative(utxos, outputs, feeRate)
-    if (result.inputs && result.fee < best.fee) {
-      best = result
-    }
-
-    --n
-  }
-
-  return best
-}
-
-function utxoScore (x, feeRate) {
-  return x.value - (feeRate * utils.inputBytes(x))
-}
-
-function privet (utxos, outputs, feeRate) {
-  let txosMap = {}
-  utxos.forEach((txo) => {
-    if (!txosMap[txo.address]) {
-      txosMap[txo.address] = []
-    }
-
-    txosMap[txo.address].push(txo)
-  })
-
-  // order & summate sets
-  for (var address in txosMap) {
-    txosMap[address] = txosMap[address].sort((a, b) => {
-      return utxoScore(b, feeRate) - utxoScore(a, feeRate)
-    })
-    txosMap[address].value = txosMap[address].reduce((a, x) => a + x.value, 0)
-  }
-
-  utxos = [].concat.apply([], Object.keys(txosMap).map(x => txosMap[x]))
-
-  // only use accumulative strategy
-  return accumulative(utxos, outputs, feeRate)
-}
+var FIFO = utils.applySort(reverse, accumulative)
 
 module.exports = {
   accumulative,
@@ -136,7 +49,8 @@ module.exports = {
   FIFO,
   maximal,
   minimal,
-  privet,
+  // privet
+  // Privet removed - couldn't figure out the point :(
   proximal,
   random
 }

@@ -12,7 +12,7 @@ function randomAddress () {
   return 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'[(Math.random() * 26) >>> 0]
 }
 
-var utils = require('../utils')
+var utils = require('../src/utils')
 
 function Simulation (name, algorithm, feeRate) {
   this.algorithm = algorithm

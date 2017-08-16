@@ -30,7 +30,7 @@
     "split.js",
     "utils.js"
   ],
-  "main": "index.js",
+  "main": "src/index.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/dcousens/coinselect.git"

@@ -62,6 +62,47 @@ function finalize (inputs, outputs, feeRate) {
   }
 }
 
+function applySort (sort, algorithm) {
+  return function (utxos, outputs, feeRate) {
+    // the sort sould copy the array
+    var utxosCopy = sort(utxos)
+    return algorithm(utxosCopy, outputs, feeRate)
+  }
+}
+
+function algorithmBackup (algorithms) {
+  return function (utxos, outputs, feeRate) {
+    var result = { fee: Infinity }
+
+    for (var i = 0; i < algorithms.length; i++) {
+      var algorithm = algorithms[i]
+      result = algorithm(utxos, outputs, feeRate)
+      if (result.inputs) {
+        return result
+      }
+    }
+
+    return result
+  }
+}
+
+function algorithmBest (algorithms) {
+  return function (utxos, outputs, feeRate) {
+    var best = { fee: Infinity }
+
+    for (var i = 0; i < algorithms.length; i++) {
+      var algorithm = algorithms[i]
+
+      var result = algorithm(utxos, outputs, feeRate)
+      if (result.inputs && result.fee < best.fee) {
+        best = result
+      }
+    }
+
+    return best
+  }
+}
+
 module.exports = {
   dustThreshold: dustThreshold,
   finalize: finalize,
@@ -70,5 +111,8 @@ module.exports = {
   sumOrNaN: sumOrNaN,
   sumForgiving: sumForgiving,
   transactionBytes: transactionBytes,
-  uintOrNaN: uintOrNaN
+  uintOrNaN: uintOrNaN,
+  applySort: applySort,
+  algorithmBackup: algorithmBackup,
+  algorithmBest: algorithmBest
 }
