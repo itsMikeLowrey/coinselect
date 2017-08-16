@@ -14,7 +14,8 @@ function sort (type) {
   return function (feeRate) {
     return function (utxos) {
       return utxos.concat().sort(function (a, b) {
-        return utxoScore(b, feeRate) - utxoScore(a, feeRate)
+        var difference = utils.utxoScore(a, feeRate) - utils.utxoScore(b, feeRate)
+        return type === 'ascending' ? difference : -difference
       })
     }
   }
