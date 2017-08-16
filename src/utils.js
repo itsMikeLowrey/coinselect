@@ -65,7 +65,7 @@ function finalize (inputs, outputs, feeRate) {
 function applySort (sort, algorithm) {
   return function (utxos, outputs, feeRate) {
     // the sort sould copy the array
-    var utxosCopy = sort(utxos)
+    var utxosCopy = sort(utxos, feeRate)
     return algorithm(utxosCopy, outputs, feeRate)
   }
 }

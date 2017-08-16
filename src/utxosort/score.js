@@ -11,12 +11,10 @@ module.exports = {
 }
 
 function sort (type) {
-  return function (feeRate) {
-    return function (utxos) {
-      return utxos.concat().sort(function (a, b) {
-        var difference = utils.utxoScore(a, feeRate) - utils.utxoScore(b, feeRate)
-        return type === 'ascending' ? difference : -difference
-      })
-    }
+  return function (utxos, feeRate) {
+    return utxos.concat().sort(function (a, b) {
+      var difference = utxoScore(a, feeRate) - utxoScore(b, feeRate)
+      return type === 'ascending' ? difference : -difference
+    })
   }
 }
