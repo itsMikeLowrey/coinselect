@@ -6,12 +6,12 @@ let utils = require('../src/utils')
 
 let shuffle = require('fisher-yates')
 
-var blackmax = utils.applySort(valueSort('ascending'), utils.algorithmBackup([blackjack, accumulative]))
-var blackmin = utils.applySort(valueSort('descending'), utils.algorithmBackup([blackjack, accumulative]))
+var blackmax = utils.applySort(valueSort.ascending, utils.algorithmBackup([blackjack, accumulative]))
+var blackmin = utils.applySort(valueSort.descending, utils.algorithmBackup([blackjack, accumulative]))
 var blackrand = utils.applySort(shuffle, utils.algorithmBackup([blackjack, accumulative]))
 
-var maximal = utils.applySort(valueSort('ascending'), accumulative)
-var minimal = utils.applySort(valueSort('descending'), accumulative)
+var maximal = utils.applySort(valueSort.ascending, accumulative)
+var minimal = utils.applySort(valueSort.descending, accumulative)
 
 var random = utils.applySort(shuffle, accumulative)
 
