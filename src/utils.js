@@ -62,14 +62,7 @@ function finalize (inputs, outputs, feeRate) {
   }
 }
 
-function applySort (sort, algorithm) {
-  return function (utxos, outputs, feeRate) {
-    var utxosCopy = sort(utxos.concat(), feeRate)
-    return algorithm(utxosCopy, outputs, feeRate)
-  }
-}
-
-function algorithmBackup (algorithms) {
+function anyOf (algorithms) {
   return function (utxos, outputs, feeRate) {
     var result = { fee: Infinity }
 
@@ -85,7 +78,7 @@ function algorithmBackup (algorithms) {
   }
 }
 
-function algorithmBest (algorithms) {
+function bestOf (algorithms) {
   return function (utxos, outputs, feeRate) {
     var best = { fee: Infinity }
 
@@ -115,8 +108,7 @@ module.exports = {
   sumForgiving: sumForgiving,
   transactionBytes: transactionBytes,
   uintOrNaN: uintOrNaN,
-  applySort: applySort,
-  algorithmBackup: algorithmBackup,
-  algorithmBest: algorithmBest,
+  bestOf: bestOf,
+  anyOf: anyOf,
   utxoScore: utxoScore
 }

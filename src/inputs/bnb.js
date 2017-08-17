@@ -24,7 +24,6 @@ module.exports = function branchAndBound (factor) {
   return function (utxos, outputs, feeRate) {
     if (!isFinite(utils.uintOrNaN(feeRate))) return {}
 
-    // TODO: segwit cost
     var costPerOutput = utils.outputBytes({}) * feeRate
     var costPerInput = utils.inputBytes({}) * feeRate
     var costOfChange = Math.floor((costPerInput + costPerOutput) * factor)

@@ -1,16 +1,16 @@
 var accumulative = require('./inputs/accumulative')
 var bnb = require('./inputs/bnb')
-var score = require('./utxosort/score')
+var sorts = require('./sorts')
 var utils = require('./utils')
-var conftrials = require('./conftrials')
+var tryConfirmed = require('./tryconfirmed')
 
-module.exports = function (inputs, outputs, feeRate) {
-  var algorithm = utils.applySort(
-    score.descending,
-    conftrials(
-      100,
-      utils.algorithmBackup([bnb(0.5), accumulative])
-    )
+module.exports = function (inputs, outputs, feeRate, options) {
+  inputs = inputs.sort(sorts.score(sorts.DESCENDING, feeRate))
+
+  var algorithm = tryConfirmed(
+    utils.anyOf([bnb(0.5), accumulative]),
+    options
   )
+
   return algorithm(inputs, outputs, feeRate)
 }

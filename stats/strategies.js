@@ -1,28 +1,60 @@
 let accumulative = require('../src/inputs/accumulative')
 let blackjack = require('../src/inputs/blackjack')
-let valueSort = require('../src/utxosort/value')
-let privetSort = require('../src/utxosort/privet')
-let blackminScore = require('../src/blackminscore')
 let bnb = require('../src/')
 let utils = require('../src/utils')
+let sorts = require('../src/sorts')
 
-let shuffleImport = require('fisher-yates/inplace')
+let shuffleImport = require('fisher-yates')
 let shuffle = utxos => shuffleImport(utxos)
 
-let blackmax = utils.applySort(valueSort.ascending, utils.algorithmBackup([blackjack, accumulative]))
-let blackmin = utils.applySort(valueSort.descending, utils.algorithmBackup([blackjack, accumulative]))
-let blackrand = utils.applySort(shuffle, utils.algorithmBackup([blackjack, accumulative]))
+function applyCompare(compare, algorithm) {
+  return applySort(inputs => inputs.concat().sort(compare), algorithm)
+}
 
-let maximal = utils.applySort(valueSort.ascending, accumulative)
-let minimal = utils.applySort(valueSort.descending, accumulative)
+function applySort(sort, algorithm) {
+  return (inputs, outputs, feeRate) =>
+    algorithm(sort(inputs, feeRate), outputs, feeRate)
+}
 
-let privet = utils.applySort(privetSort, accumulative)
+let blackmax = applyCompare(sorts.value(sorts.DESCENDING), utils.anyOf([blackjack, accumulative]))
+let blackmin = applyCompare(sorts.value(sorts.DESCENDING), utils.anyOf([blackjack, accumulative]))
+let maximal = applyCompare(sorts.value(sorts.DESCENDING), accumulative)
+let minimal = applyCompare(sorts.value(sorts.ASCENDING), accumulative)
 
-let random = utils.applySort(shuffle, accumulative)
+let blackrand = applySort(shuffle, utils.anyOf([blackjack, accumulative]))
+let random = applySort(shuffle, accumulative)
 
-let bestof = utils.algorithmBest(Array(100).fill(utils.applySort(shuffle, accumulative)))
+let bestof = utils.bestOf(Array(100).fill(applySort(shuffle, accumulative)))
+let FIFO = applySort(utxos => utxos.concat().reverse(), accumulative)
 
-let FIFO = utils.applySort(utxos => utxos.reverse(), accumulative)
+function privetSort(utxos, feeRate) {
+  let txosMap = {}
+  utxos.forEach(function (txo) {
+    if (!txosMap[txo.address]) {
+      txosMap[txo.address] = []
+    }
+
+    txosMap[txo.address].push(txo)
+  })
+  // order & summate sets
+  for (var address in txosMap) {
+    txosMap[address] = txosMap[address].sort(function (a, b) {
+      return utils.utxoScore(b, feeRate) - utils.utxoScore(a, feeRate)
+    })
+    txosMap[address].value = txosMap[address].reduce(function (a, x) {
+      return a + x.value
+    }, 0)
+  }
+
+  utxos = [].concat.apply([], Object.keys(txosMap).sort(function (ak, bk) {
+    return txosMap[bk].value - txosMap[ak].value
+  }).map(function (x) {
+    return txosMap[x]
+  }))
+  return utxos
+}
+
+let privet = applySort(privetSort, accumulative)
 
 module.exports = {
   accumulative,
@@ -32,7 +64,6 @@ module.exports = {
   blackmax,
   blackmin,
   blackrand,
-  blackminScore,
   FIFO,
   maximal,
   minimal,
