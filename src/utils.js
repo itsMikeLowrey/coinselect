@@ -18,7 +18,7 @@ function outputBytes (output) {
 }
 
 function dustThreshold (feeRate, inputLength) {
-  return inputBytes({script: {length: inputLenghtEstimate}}) * feeRate
+  return inputBytes({script: {length: inputLength}}) * feeRate
 }
 
 function transactionBytes (inputs, outputs) {
@@ -45,7 +45,7 @@ function sumOrNaN (range) {
 
 function finalize (inputs, outputs, feeRate, inputLength, outputLength) {
   var bytesAccum = transactionBytes(inputs, outputs)
-  var blankOutputBytes = outputBytes({script: {length: changeOutputLength}})
+  var blankOutputBytes = outputBytes({script: {length: outputLength}})
   var feeAfterExtraOutput = feeRate * (bytesAccum + blankOutputBytes)
   var remainderAfterExtraOutput = sumOrNaN(inputs) - (sumOrNaN(outputs) + feeAfterExtraOutput)
 
@@ -93,7 +93,6 @@ module.exports = {
   sumForgiving: sumForgiving,
   transactionBytes: transactionBytes,
   uintOrNaN: uintOrNaN,
-  bestOf: bestOf,
   anyOf: anyOf,
   utxoScore: utxoScore
 }
