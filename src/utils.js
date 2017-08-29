@@ -1,21 +1,24 @@
 // baseline estimates, used to improve performance
 var TX_EMPTY_SIZE = 4 + 1 + 1 + 4
 var TX_INPUT_BASE = 32 + 4 + 1 + 4
-var TX_INPUT_PUBKEYHASH = 107
 var TX_OUTPUT_BASE = 8 + 1
-var TX_OUTPUT_PUBKEYHASH = 25
 
 function inputBytes (input) {
-  return TX_INPUT_BASE + (input.script ? input.script.length : TX_INPUT_PUBKEYHASH)
+  if (input.script.length == null) {
+    throw new Error("Null script length")
+  }
+  return TX_INPUT_BASE + input.script.length
 }
 
 function outputBytes (output) {
-  return TX_OUTPUT_BASE + (output.script ? output.script.length : TX_OUTPUT_PUBKEYHASH)
+  if (output.script.length == null) {
+    throw new Error("Null script length")
+  }
+  return TX_OUTPUT_BASE + output.script.length
 }
 
-function dustThreshold (output, feeRate) {
-  /* ... classify the output for input estimate  */
-  return inputBytes({}) * feeRate
+function dustThreshold (feeRate, inputLength) {
+  return inputBytes({script: {length: inputLenghtEstimate}}) * feeRate
 }
 
 function transactionBytes (inputs, outputs) {
@@ -40,16 +43,15 @@ function sumOrNaN (range) {
   return range.reduce(function (a, x) { return a + uintOrNaN(x.value) }, 0)
 }
 
-var BLANK_OUTPUT = outputBytes({})
-
-function finalize (inputs, outputs, feeRate) {
+function finalize (inputs, outputs, feeRate, inputLength, outputLength) {
   var bytesAccum = transactionBytes(inputs, outputs)
-  var feeAfterExtraOutput = feeRate * (bytesAccum + BLANK_OUTPUT)
+  var blankOutputBytes = outputBytes({script: {length: changeOutputLength}})
+  var feeAfterExtraOutput = feeRate * (bytesAccum + blankOutputBytes)
   var remainderAfterExtraOutput = sumOrNaN(inputs) - (sumOrNaN(outputs) + feeAfterExtraOutput)
 
   // is it worth a change output?
-  if (remainderAfterExtraOutput > dustThreshold({}, feeRate)) {
-    outputs = outputs.concat({ value: remainderAfterExtraOutput })
+  if (remainderAfterExtraOutput > dustThreshold(feeRate, inputLength)) {
+    outputs = outputs.concat({ value: remainderAfterExtraOutput, script: {length: outputLength} })
   }
 
   var fee = sumOrNaN(inputs) - sumOrNaN(outputs)
@@ -63,35 +65,18 @@ function finalize (inputs, outputs, feeRate) {
 }
 
 function anyOf (algorithms) {
-  return function (utxos, outputs, feeRate) {
+  return function (utxos, outputs, feeRate, inputLength, outputLength) {
     var result = { fee: Infinity }
 
     for (var i = 0; i < algorithms.length; i++) {
       var algorithm = algorithms[i]
-      result = algorithm(utxos, outputs, feeRate)
+      result = algorithm(utxos, outputs, feeRate, inputLength, outputLength)
       if (result.inputs) {
         return result
       }
     }
 
     return result
-  }
-}
-
-function bestOf (algorithms) {
-  return function (utxos, outputs, feeRate) {
-    var best = { fee: Infinity }
-
-    for (var i = 0; i < algorithms.length; i++) {
-      var algorithm = algorithms[i]
-
-      var result = algorithm(utxos, outputs, feeRate)
-      if (result.inputs && result.fee < best.fee) {
-        best = result
-      }
-    }
-
-    return best
   }
 }
 

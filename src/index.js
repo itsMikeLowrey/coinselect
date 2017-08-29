@@ -12,5 +12,5 @@ module.exports = function (inputs, outputs, feeRate, options) {
     options
   )
 
-  return algorithm(inputs, outputs, feeRate)
+  return algorithm(inputs, outputs, feeRate, options.inputLength, options.outputLength)
 }

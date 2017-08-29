@@ -37,7 +37,7 @@ module.exports = function tryConfirmed (algorithm, options) {
   var other = options.other || 6
   var coinbase = options.coinbase || 100
 
-  return function (utxos, outputs, feeRate) {
+  return function (utxos, outputs, feeRate, inputLength, outputLength) {
     if (utxos.length === 0) {
       return {}
     }
@@ -73,7 +73,7 @@ module.exports = function tryConfirmed (algorithm, options) {
         usable = usable.concat(filterResult.usable)
         unusable = filterResult.unusable
 
-        var result = algorithm(usable, outputs, feeRate)
+        var result = algorithm(usable, outputs, feeRate, inputLength, outputLength)
         if (result.inputs) {
           return result
         }
