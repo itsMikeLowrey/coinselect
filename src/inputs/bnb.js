@@ -39,7 +39,11 @@ module.exports = function branchAndBound (factor) {
     var effectiveUtxos = calculateEffectiveValues(utxos, feeRate).filter(function (x) {
       return x.effectiveValue > 0
     }).sort(function (a, b) {
-      return b.effectiveValue - a.effectiveValue
+      if (b.effectiveValue - a.effectiveValue !== 0) {
+        return b.effectiveValue - a.effectiveValue;
+      } else {
+        return a.utxo.i - b.utxo.i;
+      }
     })
 
     var selected = search(effectiveUtxos, outAccum, costOfChange)

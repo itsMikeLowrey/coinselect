@@ -5,7 +5,7 @@ var utils = require('./utils')
 var tryConfirmed = require('./tryconfirmed')
 
 module.exports = function (inputs, outputs, feeRate, options) {
-  inputs = inputs.sort(sorts.score(sorts.DESCENDING, feeRate))
+  inputs = inputs.sort(sorts.score(feeRate))
 
   var algorithm = tryConfirmed(
     utils.anyOf([bnb(0.5), accumulative]),

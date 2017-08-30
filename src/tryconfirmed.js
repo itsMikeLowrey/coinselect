@@ -1,19 +1,23 @@
-function filterUtxos (utxos, minConfOwn, minConfOther, minConfCoinbase) {
+function filterCoinbase (utxos, minConfCoinbase) {
+  return utxos.filter(function (utxo) { 
+    if (utxo.coinbase) {
+      return utxo.confirmations >= minConfCoinbase
+    }
+    return true;
+  });
+}
+
+
+function filterUtxos (utxos, minConfOwn, minConfOther) {
   var usable = []
   var unusable = []
 
   for (var i = 0; i < utxos.length; i++) {
     var utxo = utxos[i]
-    if (utxo.coinbase == null || utxo.own == null || utxo.confirmations == null) {
-      console.log(utxo)
-      throw new Error('Missing information.')
-    }
 
     var isUsed
 
-    if (utxo.coinbase) {
-      isUsed = utxo.confirmations >= minConfCoinbase
-    } else if (utxo.own) {
+    if (utxo.own) {
       isUsed = utxo.confirmations >= minConfOwn
     } else {
       isUsed = utxo.confirmations >= minConfOther
@@ -32,12 +36,19 @@ function filterUtxos (utxos, minConfOwn, minConfOther, minConfCoinbase) {
 }
 
 module.exports = function tryConfirmed (algorithm, options) {
-  options = options || {}
   var own = options.own || 1
   var other = options.other || 6
   var coinbase = options.coinbase || 100
 
   return function (utxos, outputs, feeRate, inputLength, outputLength) {
+    utxos.forEach(function (utxo) {
+      if (utxo.coinbase == null || utxo.own == null || utxo.confirmations == null) {
+        throw new Error('Missing information.')
+      }
+    })
+
+    utxos = filterCoinbase(utxos, coinbase)
+
     if (utxos.length === 0) {
       return {}
     }
@@ -86,6 +97,6 @@ module.exports = function tryConfirmed (algorithm, options) {
     }
 
     // we should never end here
-    throw new Error('Unexpected unreturned result')
+    // throw new Error('Unexpected unreturned result')
   }
 }

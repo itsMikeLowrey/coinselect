@@ -1,25 +1,15 @@
 var utils = require('./utils')
 
-var ASCENDING = 'ascending'
-var DESCENDING = 'descending'
-
-function score (type, feeRate) {
+function score (feeRate) {
   return function (a, b) {
     var difference = utils.utxoScore(a, feeRate) - utils.utxoScore(b, feeRate)
-    return type === ASCENDING ? difference : -difference
-  }
-}
-
-function value (type) {
-  return function (a, b) {
-    var difference = a.value - b.value
-    return type === ASCENDING ? difference : -difference
+    if (difference === 0) {
+      return a.i - b.i
+    }
+    return -difference
   }
 }
 
 module.exports = {
-  score: score,
-  value: value,
-  ASCENDING: ASCENDING,
-  DESCENDING: DESCENDING
+  score: score
 }
